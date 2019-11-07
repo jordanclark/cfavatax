@@ -21,13 +21,13 @@ component {
 	function debugLog( required input ) {
 		if ( structKeyExists( request, "log" ) && isCustomFunction( request.log ) ) {
 			if ( isSimpleValue( arguments.input ) ) {
-				request.log( "avalara: " & arguments.input );
+				request.log( "avatax: " & arguments.input );
 			} else {
-				request.log( "avalara: (complex type)" );
+				request.log( "avatax: (complex type)" );
 				request.log( arguments.input );
 			}
 		} else {
-			cftrace( text=( isSimpleValue( arguments.input ) ? arguments.input : "" ), var=arguments.input, category="avalara", type="information" );
+			cftrace( text=( isSimpleValue( arguments.input ) ? arguments.input : "" ), var=arguments.input, category="avatax", type="information" );
 		}
 		return;
 	}
@@ -97,7 +97,7 @@ component {
 		this.debugLog( "API: #uCase( out.verb )#: #out.requestUrl#" );
 		out.headers[ "Accept" ]= "application/json";
 		out.headers[ "Content-Type" ]= "application/json";
-		out.headers[ "X-Avalara-Client" ]= "#this.appName#; CFAvalara; 0.1";
+		out.headers[ "X-Avalara-Client" ]= "#this.appName#; CFAvaTax; 0.1";
 		if ( request.debug && request.dump ) {
 			this.debugLog( out );
 		}
