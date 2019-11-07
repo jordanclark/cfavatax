@@ -11,7 +11,7 @@ avalara.com Tax ColdFusion Rest API Client
 
 ## To Install
 Run the following from commandbox:
-`box install cfavalara`
+`box install cfavatax`
 
 ## Changes
 2019-11-06 Open source release
