@@ -1,0 +1,41 @@
+{
+    "name":"cfavatax",
+    "slug":"cfavatax",
+    "version":"0.1.0",
+    "author":"Jordan Clark <jordanclark@gmail.com>",
+    "keywords":[
+        "avalara",
+        "avatax",
+        "shopping",
+        "tax",
+        "ecommerce",
+        "api",
+        "rest"
+    ],
+    "shortDescription":"API client for avalara.com",
+    "type":"modules",
+    "location":"jordanclark/cfavatax#v0.1.0",
+    "repository":{
+        "URL":"https://github.com/jordanclark/cfavatax.git",
+        "type":"GIT"
+    },
+    "homepage":"https://github.com/jordanclark/cfavatax",
+    "bugs":"https://github.com/jordanclark/cfavatax/issues",
+    "license":[
+        {
+            "type":"Apache-2.0",
+            "URL":"https://github.com/jordanclark/cfavatax/blob/master/LICENSE"
+        }
+    ],
+    "private":false,
+    "ignore":[
+        "**/.*",
+        "/test/",
+        "/tests/"
+    ],
+    "scripts":{
+        "postVersion":"package set location='jordanclark/cfavatax#v`package version`'",
+        "onRelease":"publish",
+        "postPublish":"!git push --follow-tags"
+    }
+}
