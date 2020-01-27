@@ -36,6 +36,62 @@ component {
 		return this.apiRequest( api= "GET /utilities/ping" );
 	}
 
+	function listAccountUsers( string accountID ) {
+		return this.apiRequest( api= "GET /accounts/#this.accountID#/users" );
+	}
+
+	function listUsers() {
+		return this.apiRequest( api= "GET /users" );
+	}
+
+	function createUser() {
+		return this.apiRequest( api= "POST /accounts/#this.accountID#/users" );
+	}
+
+	function listCompanies() {
+		return this.apiRequest( api= "GET /companies" );
+	}
+
+	function listCustomers() {
+		return this.apiRequest( api= "GET /companies/#this.companyID#/customers" );
+	}
+	
+	function getCustomer( string code ) {
+		return this.apiRequest( api= "GET /companies/#this.companyID#/customers/#arguments.code#" );
+	}
+
+	function listLocationsByCompany() {
+		return this.apiRequest( api= "GET /companies/#this.companyID#/locations" );
+	}
+
+	function listTaxRules() {
+		return this.apiRequest( api= "GET /companies/#this.companyID#/taxrules" );
+	}
+
+	function listTransactionsByCompany() {
+		return this.apiRequest( api= "GET /companies/#this.companyCode#/transactions" );
+	}
+	
+	function getTransaction( string id ) {
+		return this.apiRequest( api= "GET /transactions/#arguments.id#" );
+	}
+
+	function createSalesOrder(
+		string companyCode= this.companyCode
+	) {
+		arguments.type= "SalesOrder";
+		arguments.date= now();
+		return this.apiRequest( api= "POST /transactions/create?$include=SummaryOnly", argumentCollection= arguments );
+	}
+
+	function createTransaction(
+		string type= "SalesOrder"
+	,	string companyCode= this.companyCode
+	,	date= now()
+	) {
+		return this.apiRequest( api= "POST /transactions/create", argumentCollection= arguments );
+	}
+
 	function resolveAddress(
 		required string line1
 	,	string line2
