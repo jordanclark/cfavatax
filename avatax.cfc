@@ -157,7 +157,7 @@ component {
 		if ( request.debug && request.dump ) {
 			this.debugLog( out );
 		}
-		cftimer( type= "debug", label= "avalara request" ) {
+		cftimer( type= "debug", label= "avalara request: #out.requestUrl#" ) {
 			cfhttp( result= "http", method= out.verb, url= out.requestUrl, charset= "UTF-8", throwOnError= false, timeOut= this.httpTimeOut ) {
 				if ( structKeyExists( out, "body" ) ) {
 					cfhttpparam( type= "body", value= out.body );
