@@ -1,7 +1,7 @@
 {
     "name":"cfavatax",
     "slug":"cfavatax",
-    "version":"0.2.1",
+    "version":"0.2.2",
     "author":"Jordan Clark <jordanclark@gmail.com>",
     "keywords":[
         "avalara",
@@ -14,7 +14,7 @@
     ],
     "shortDescription":"API client for avalara.com",
     "type":"modules",
-    "location":"jordanclark/cfavatax#v0.2.1",
+    "location":"jordanclark/cfavatax#v0.2.2",
     "repository":{
         "URL":"https://github.com/jordanclark/cfavatax.git",
         "type":"GIT"
