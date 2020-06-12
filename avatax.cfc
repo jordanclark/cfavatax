@@ -152,7 +152,7 @@ component {
 		if ( out.verb == "GET" ) {
 			out.requestUrl &= this.structToQueryString( out.args, out.requestUrl, true );
 		} else if ( !structIsEmpty( out.args ) ) {
-			out.body= serializeJSON( out.args );
+			out.body= serializeJSON( out.args, false, false );
 		}
 		this.debugLog( "API: #uCase( out.verb )#: #out.requestUrl#" );
 		out.headers[ "Accept" ]= "application/json";
