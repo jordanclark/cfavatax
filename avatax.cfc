@@ -19,8 +19,8 @@ component {
 	}
 
 	function debugLog( required input ) {
-		if ( structKeyExists( request, "log" ) && isCustomFunction( request.log ) ) {
-			if ( isSimpleValue( arguments.input ) ) {
+		if( structKeyExists( request, "log" ) && isCustomFunction( request.log ) ) {
+			if( isSimpleValue( arguments.input ) ) {
 				request.log( "avatax: " & arguments.input );
 			} else {
 				request.log( "avatax: (complex type)" );
@@ -40,49 +40,59 @@ component {
 		return this.apiRequest( api= "GET /utilities/ping" );
 	}
 
-	function listAccountUsers( string accountID ) {
-		return this.apiRequest( api= "GET /accounts/#this.accountID#/users" );
+	// https://developer.avalara.com/api-reference/avatax/rest/v2/methods/Utilities/ListMySubscriptions/
+	function ListMySubscriptions() {
+		return this.apiRequest( api= "GET /utilities/subscriptions" );
+	}
+
+	// https://developer.avalara.com/api-reference/avatax/rest/v2/methods/Utilities/GetMySubscription/
+	function GetMySubscription() {
+		return this.apiRequest( api= "GET /utilities/subscriptions/{serviceTypeId}" );
+	}
+
+	
+
+	function listAccountUsers( string accountID= this.accountID ) {
+		return this.apiRequest( api= "GET /accounts/#arguments.accountID#/users" );
 	}
 
 	function listUsers() {
 		return this.apiRequest( api= "GET /users" );
 	}
 
-	function createUser() {
-		return this.apiRequest( api= "POST /accounts/#this.accountID#/users" );
+	function createUser( string accountID= this.accountID ) {
+		return this.apiRequest( api= "POST /accounts/#arguments.accountID#/users" );
 	}
 
 	function listCompanies() {
 		return this.apiRequest( api= "GET /companies" );
 	}
 
-	function listCustomers() {
-		return this.apiRequest( api= "GET /companies/#this.companyID#/customers" );
+	function listCustomers( string companyID= this.companyID ) {
+		return this.apiRequest( api= "GET /companies/#arguments.companyID#/customers" );
 	}
 	
-	function getCustomer( string code ) {
-		return this.apiRequest( api= "GET /companies/#this.companyID#/customers/#arguments.code#" );
+	function getCustomer( required string code, string companyID= this.companyID ) {
+		return this.apiRequest( api= "GET /companies/#arguments.companyID#/customers/#arguments.code#" );
 	}
 
-	function listLocationsByCompany() {
-		return this.apiRequest( api= "GET /companies/#this.companyID#/locations" );
+	function listLocationsByCompany( string companyID= this.companyID ) {
+		return this.apiRequest( api= "GET /companies/#arguments.companyID#/locations" );
 	}
 
-	function listTaxRules() {
-		return this.apiRequest( api= "GET /companies/#this.companyID#/taxrules" );
+	function listTaxRules( string companyID= this.companyID ) {
+		return this.apiRequest( api= "GET /companies/#arguments.companyID#/taxrules" );
 	}
 
-	function listTransactionsByCompany() {
-		return this.apiRequest( api= "GET /companies/#this.companyCode#/transactions" );
+	function listTransactionsByCompany( string companyID= this.companyID ) {
+		return this.apiRequest( api= "GET /companies/#arguments.companyID#/transactions" );
 	}
 	
 	function getTransaction( string id ) {
 		return this.apiRequest( api= "GET /transactions/#arguments.id#" );
 	}
 
-	function createSalesOrder(
-		string companyCode= this.companyCode
-	) {
+	function createSalesOrder( string companyCode= this.companyCode ) {
 		arguments.type= "SalesOrder";
 		arguments.date= now();
 		return this.apiRequest( api= "POST /transactions/create?$include=SummaryOnly", argumentCollection= arguments );
@@ -149,24 +159,24 @@ component {
 		}
 		structDelete( out.args, "api" );
 		// structDelete( out.args, "auth" );
-		if ( out.verb == "GET" ) {
+		if( out.verb == "GET" ) {
 			out.requestUrl &= this.structToQueryString( out.args, out.requestUrl, true );
-		} else if ( !structIsEmpty( out.args ) ) {
+		} else if( !structIsEmpty( out.args ) ) {
 			out.body= serializeJSON( out.args, false, false );
 		}
 		this.debugLog( "API: #uCase( out.verb )#: #out.requestUrl#" );
 		out.headers[ "Accept" ]= "application/json";
 		out.headers[ "Content-Type" ]= "application/json";
 		out.headers[ "X-Avalara-Client" ]= "#this.appName#; CFAvaTax; 0.1";
-		if ( request.debug && request.dump ) {
+		if( request.debug && request.dump ) {
 			this.debugLog( out );
 		}
 		cftimer( type= "debug", label= "avalara request: #out.requestUrl#" ) {
 			cfhttp( result= "http", method= out.verb, url= out.requestUrl, charset= "UTF-8", throwOnError= false, timeOut= this.httpTimeOut ) {
-				if ( structKeyExists( out, "body" ) ) {
+				if( structKeyExists( out, "body" ) ) {
 					cfhttpparam( type= "body", value= out.body );
 				}
-				for ( item in out.headers ) {
+				for( item in out.headers ) {
 					cfhttpparam( name= item, type= "header", value= out.headers[ item ] );
 				}
 			}
@@ -175,40 +185,40 @@ component {
 		out.response= toString( http.fileContent );
 		//this.debugLog( out.response );
 		out.statusCode= http.responseHeader.Status_Code ?: 500;
-		if ( left( out.statusCode, 1 ) == 4 || left( out.statusCode, 1 ) == 5 ) {
+		if( left( out.statusCode, 1 ) == 4 || left( out.statusCode, 1 ) == 5 ) {
 			out.success= false;
 			out.error= "status code error: #out.statusCode#";
-		} else if ( out.response == "Connection Timeout" || out.response == "Connection Failure" ) {
+		} else if( out.response == "Connection Timeout" || out.response == "Connection Failure" ) {
 			out.error= out.response;
-		} else if ( left( out.statusCode, 1 ) == 2 ) {
+		} else if( left( out.statusCode, 1 ) == 2 ) {
 			out.success= true;
 		}
 		// parse response 
-		if ( len( out.response ) && isJson( out.response ) ) {
+		if( len( out.response ) && isJson( out.response ) ) {
 			try {
 				out.response= deserializeJSON( out.response );
-			} catch (any cfcatch) {
+			} catch( any cfcatch ) {
 				out.error= "JSON Error: " & (cfcatch.message?:"No catch message") & " " & (cfcatch.detail?:"No catch detail");
 			}
 		} else {
 			out.error= "Response not JSON: #out.response#";
 		}
-		if ( len( out.error ) ) {
+		if( len( out.error ) ) {
 			out.success= false;
 		}
 		this.debugLog( out.statusCode & " " & out.error );
 		return out;
 	}
 
-	string function structToQueryString(required struct stInput, string sUrl= "", boolean bEncode= true) {
+	string function structToQueryString( required struct stInput, string sUrl= "", boolean bEncode= true ) {
 		var sOutput= "";
 		var sItem= "";
 		var sValue= "";
-		var amp= ( find( "?", arguments.sUrl ) ? "&" : "?" );
-		for ( sItem in stInput ) {
+		var amp=( find( "?", arguments.sUrl ) ? "&" : "?" );
+		for( sItem in stInput ) {
 			sValue= stInput[ sItem ];
-			if ( !isNull( sValue ) && len( sValue ) ) {
-				if ( bEncode ) {
+			if( !isNull( sValue ) && len( sValue ) ) {
+				if( bEncode ) {
 					sOutput &= amp & sItem & "=" & urlEncodedFormat( sValue );
 				} else {
 					sOutput &= amp & sItem & "=" & sValue;
